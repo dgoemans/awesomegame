@@ -17,6 +17,8 @@ function(Phaser)
         this.speed = 100;
     }
 
+    // Define the constructor for inheritence
+    Player.prototype.constructor = Player;
 
     Player.prototype.update = function()
     {

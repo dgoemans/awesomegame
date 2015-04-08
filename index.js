@@ -4,12 +4,11 @@
 requirejs.config({
     baseUrl: 'src',
     paths: {
-        Phaser: '../lib/phaser-arcade-physics.min'
+        Phaser: '../lib/phaser'
     }
 });
 
-require([
-        "Phaser",
+require(["Phaser",
         "Player",
         "Enemy",
         "Collectible"],
@@ -18,6 +17,7 @@ function(Phaser,Player,Enemy,Collectible)
     window.game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.AUTO, '', { preload: preload, create: create, update: update });
     var player = null;
     var cursors = null;
+    var enemy = null;
 
     function preload()
     {
@@ -28,10 +28,13 @@ function(Phaser,Player,Enemy,Collectible)
     {
         cursors = game.input.keyboard.createCursorKeys();
         player = new Player(cursors);
+        enemy = new Enemy();
     }
 
     function update()
     {
         player.update();
+        enemy.update();
     }
+
 });
