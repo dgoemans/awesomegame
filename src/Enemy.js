@@ -10,6 +10,8 @@ function(Phaser)
         this.image.width = size;
         this.image.height = size;
         this.speed = 100;
+
+        game.physics.p2.enable(this.image);
     };
 
     Enemy.prototype.constructor = Enemy;
