@@ -30,6 +30,8 @@ function(Phaser,Player,Enemy,Track,Collectible)
         game.load.image('road', 'assets/road.png');
         game.load.image('straight', 'assets/straight.png');
         game.load.image('corner', 'assets/corner.png');
+        game.load.image('crate', 'assets/crate.png');
+        game.load.image('smoke', 'assets/smoke.png');
     }
 
     function create()

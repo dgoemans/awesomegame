@@ -1,9 +1,11 @@
-define(["Phaser"],
-    function(Phaser)
+define(["Phaser", "Obstacle"],
+    function(Phaser, Obstacle)
     {
         var Track = function ()
         {
             this.batch = game.add.spriteBatch();
+
+            this.crateSpawnChance = 0.2;
 
             this.tileSize = { x: 800, y: 800 };
 
@@ -26,7 +28,7 @@ define(["Phaser"],
             image.anchor.setTo(0.5);
             image.rotation = -rotation * Math.PI/2;
 
-            var object = { image: image, out: 0 };
+            var object = { image: image, out: 0, obstacles: [] };
 
             if(type === 0)
             {
@@ -74,6 +76,15 @@ define(["Phaser"],
                     this.currentPos.x -= this.tileSize.x;
                     object.out = 3;
                 }
+            }
+
+            if(Math.random() < this.crateSpawnChance)
+            {
+                // Spawn somewhere on the tile
+                var x = image.x + Math.random()*image.width;
+                var y = image.y + Math.random()*image.height;
+                var obstacle = new Obstacle(x,y);
+                object.obstacles.push(obstacle);
             }
 
             this.tiles.push(object);

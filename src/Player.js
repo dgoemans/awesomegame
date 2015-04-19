@@ -9,6 +9,8 @@ function(Phaser)
 {
     function Player(cursors)
     {
+        this.group = game.add.group();
+
         this.wheelAngle = 0;
 
         this.wheels = {};
@@ -24,31 +26,36 @@ function(Phaser)
         this.frontOffset = { x: 23, y: 20};
         this.rearOffset = { x: 23, y: 27 };
 
-        this.image = game.add.sprite(game.world.centerX-this.size.x/2, game.world.centerY-this.size.y/2, "car");
+        this.image = game.add.sprite(game.world.centerX-this.size.x/2, game.world.centerY-this.size.y/2, "car", null, this.group);
         this.image.width = this.size.x;
         this.image.height = this.size.y;
 
-        this.wheels.tl = game.add.sprite(this.image.x - this.frontOffset.x, this.image.y - this.frontOffset.y, "tyre");
+        this.wheels.tl = game.add.sprite(this.image.x - this.frontOffset.x, this.image.y - this.frontOffset.y, "tyre", null, this.group);
         this.wheels.tl.width = this.wheelSize.x;
         this.wheels.tl.height = this.wheelSize.y;
 
-        this.wheels.tr = game.add.sprite(this.image.x + this.frontOffset.x, this.image.y - this.frontOffset.y, "tyre");
+        this.wheels.tr = game.add.sprite(this.image.x + this.frontOffset.x, this.image.y - this.frontOffset.y, "tyre", null, this.group);
         this.wheels.tr.width = this.wheelSize.x;
         this.wheels.tr.height = this.wheelSize.y;
 
 
-        this.wheels.bl = game.add.sprite(this.image.x - this.rearOffset.x, this.image.y + this.rearOffset.y, "tyre");
+        this.wheels.bl = game.add.sprite(this.image.x - this.rearOffset.x, this.image.y + this.rearOffset.y, "tyre", null, this.group);
         this.wheels.bl.width = this.wheelSize.x;
         this.wheels.bl.height = this.wheelSize.y;
 
 
-        this.wheels.br = game.add.sprite(this.image.x + this.rearOffset.x, this.image.y + this.rearOffset.y, "tyre");
+        this.wheels.br = game.add.sprite(this.image.x + this.rearOffset.x, this.image.y + this.rearOffset.y, "tyre", null, this.group);
         this.wheels.br.width = this.wheelSize.x;
         this.wheels.br.height = this.wheelSize.y;
 
         game.physics.p2.enable([this.image, this.wheels.tl, this.wheels.tr, this.wheels.bl, this.wheels.br]);
 
-        game.world.bringToTop(this.image);
+        this.emitter = game.add.emitter(this.image.x, this.image.y, 200);
+        this.emitter.makeParticles('smoke');
+
+        this.group.add(this.emitter);
+
+        this.group.bringToTop(this.image);
 
         var damp = 0.9;
         var aDamp = 0.9;
@@ -56,8 +63,6 @@ function(Phaser)
         this.image.body.mass = 1;
         this.image.body.damping = damp;
         this.image.body.angularDamping = aDamp;
-
-        this.image.body.clearCollision(true, true);
 
         for(var key in this.wheels)
         {
@@ -73,6 +78,11 @@ function(Phaser)
 
             game.physics.p2.createLockConstraint(this.image, wheel, [-xDist, -yDist]);
         }
+
+        this.emitter.setRotation(0, Math.PI);
+        this.emitter.setAlpha(1, 0, 700, Phaser.Easing.Quadratic.Out);
+        this.emitter.setScale(0.2, 2, 0.2, 2, 700, Phaser.Easing.Quadratic.Out);
+        this.emitter.start(false, 700, 10);
     }
 
     // Define the constructor for inheritence
@@ -129,6 +139,13 @@ function(Phaser)
             this.wheels.tl.body.moveBackward(this.speed);
             this.wheels.tr.body.moveBackward(this.speed);
         }
+
+        var xDist = this.wheels.br.x - this.wheels.bl.x;
+
+        var exhaustPosX = this.wheels.bl.x + xDist * 0.75;
+
+        this.emitter.x = exhaustPosX;
+        this.emitter.y = (this.wheels.br.y + this.wheels.bl.y)/2;
     };
 
 
