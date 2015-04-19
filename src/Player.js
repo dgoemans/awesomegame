@@ -12,6 +12,7 @@ function(Phaser)
         this.group = game.add.group();
 
         this.wheelAngle = 0;
+        this.autoDrive = false;
 
         this.wheels = {};
         this.cursors = cursors;
@@ -24,7 +25,7 @@ function(Phaser)
 
         this.turnSpeed = 0.06;
         this.turnDamp = 0.9;
-        this.turnMax = Math.PI/6;
+        this.turnMax = Math.PI/5;
 
         this.wheelSize = {x:7, y:15};
         this.frontOffset = { x: 18, y: 21};
@@ -74,10 +75,10 @@ function(Phaser)
 
         this.group.bringToTop(this.image);
 
-        var damp = 0.9;
-        var aDamp = 0.9;
+        var damp = 0.7;
+        var aDamp = 0.4;
 
-        this.image.body.mass = 1;
+        this.image.body.mass = 4;
         this.image.body.damping = damp;
         this.image.body.angularDamping = aDamp;
 
@@ -99,6 +100,16 @@ function(Phaser)
 
     // Define the constructor for inheritence
     Player.prototype.constructor = Player;
+
+    Player.prototype.turnLeft = function()
+    {
+        this.wheelAngle -= this.turnSpeed;
+    }
+
+    Player.prototype.turnRight = function()
+    {
+        this.wheelAngle += this.turnSpeed;
+    }
 
     Player.prototype.update = function()
     {
@@ -139,9 +150,7 @@ function(Phaser)
 
         this.wheelAngle *= this.turnDamp;
 
-
-
-        if(this.cursors.up.isDown)
+        if(this.cursors.up.isDown || this.autoDrive)
         {
             if(this.speed < 0)
                 this.speed = 0;

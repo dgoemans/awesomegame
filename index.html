@@ -34,6 +34,39 @@
             transform: translateX(-50%);
             font-family: Consolas, Menlo, Monaco, monospace;
         }
+
+        .mobile-controls
+        {
+            position: absolute;
+            bottom : -50px;
+            width : 100%;
+        }
+
+        .button
+        {
+            position: absolute;
+            font-weight: bold;
+            font-size: 3.0em;
+            background-color: #fafafa;
+            width: 140px;
+            height: 100px;
+            text-align: center;
+            padding-top: 45px;
+            margin: 5px;
+            border: 2px #cccccc solid;
+            top: 0px;
+        }
+
+        .left
+        {
+            left: 0px;
+        }
+
+        .right
+        {
+            right: 0px;
+        }
+
     </style>
 </head>
 <body>
@@ -41,6 +74,10 @@
     <div id="game" class="game">
         <div class="controls">
             Use the cursor keys to control the game
+        </div>
+        <div class="mobile-controls" id="mobile-controls">
+            <div id="left" class="left button">←</div>
+            <div id="right" class="right button">→</div>
         </div>
     </div>
 </body>
