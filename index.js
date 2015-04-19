@@ -15,7 +15,8 @@ require(["Phaser",
         "Collectible"],
 function(Phaser,Player,Enemy,Track,Collectible)
 {
-    game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render });
+    var gameElt = document.getElementById('game');
+    game = new Phaser.Game(gameElt.clientWidth, gameElt.clientHeight, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render });
     var player = null;
     var cursors = null;
     var enemy = null;

@@ -4,15 +4,44 @@
     <meta charset="UTF-8">
     <title></title>
     <style>
-        body{
+        body
+        {
             width: 100%;
             height: 100%;
             padding: 0px;
             margin: 0px;
+            background: #dadada;
+        }
+
+        .game
+        {
+            width : 900px;
+            height: 670px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #44aa44;
+        }
+
+        .controls
+        {
+            position: absolute;
+            bottom : -40px;
+            text-align: center;
+            width : 400px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: Consolas, Menlo, Monaco, monospace;
         }
     </style>
 </head>
 <body>
     <script data-main="index.js" src="bower_components/requirejs/require.js"></script>
+    <div id="game" class="game">
+        <div class="controls">
+            Use the cursor keys to control the game
+        </div>
+    </div>
 </body>
 </html>
