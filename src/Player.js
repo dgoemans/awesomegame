@@ -15,16 +15,20 @@ function(Phaser)
 
         this.wheels = {};
         this.cursors = cursors;
-        this.size = {x:50,y:80};
-        this.speed = 1000;
+        this.size = {x:50,y:90};
 
-        this.turnSpeed = 0.05;
+        this.maxSpeed = 1200;
+        this.speed = 0;
+        this.acceleration = 1500;
+        this.deceleration = 1000;
+
+        this.turnSpeed = 0.06;
         this.turnDamp = 0.9;
         this.turnMax = Math.PI/6;
 
-        this.wheelSize = {x:10, y:20};
-        this.frontOffset = { x: 23, y: 20};
-        this.rearOffset = { x: 23, y: 27 };
+        this.wheelSize = {x:7, y:15};
+        this.frontOffset = { x: 18, y: 21};
+        this.rearOffset = { x: 19, y: 27 };
 
         this.image = game.add.sprite(game.world.centerX-this.size.x/2, game.world.centerY-this.size.y/2, "car", null, this.group);
         this.image.width = this.size.x;
@@ -50,10 +54,23 @@ function(Phaser)
 
         game.physics.p2.enable([this.image, this.wheels.tl, this.wheels.tr, this.wheels.bl, this.wheels.br]);
 
-        this.emitter = game.add.emitter(this.image.x, this.image.y, 200);
-        this.emitter.makeParticles('smoke');
+        this.exhausts = [];
 
-        this.group.add(this.emitter);
+        for(var i=0; i<2; i++)
+        {
+            var emitter = game.add.emitter(this.image.x, this.image.y, 200);
+            emitter.makeParticles('smoke');
+
+            emitter.setRotation(0, Math.PI);
+            emitter.setAlpha(1, 0, 700, Phaser.Easing.Quadratic.Out);
+            emitter.setScale(0.2, 2, 0.2, 2, 700, Phaser.Easing.Quadratic.Out);
+            emitter.start(false, 700, 10);
+
+            // Only for draw ordering
+            this.group.add(emitter);
+
+            this.exhausts.push(emitter);
+        }
 
         this.group.bringToTop(this.image);
 
@@ -78,11 +95,6 @@ function(Phaser)
 
             game.physics.p2.createLockConstraint(this.image, wheel, [-xDist, -yDist]);
         }
-
-        this.emitter.setRotation(0, Math.PI);
-        this.emitter.setAlpha(1, 0, 700, Phaser.Easing.Quadratic.Out);
-        this.emitter.setScale(0.2, 2, 0.2, 2, 700, Phaser.Easing.Quadratic.Out);
-        this.emitter.start(false, 700, 10);
     }
 
     // Define the constructor for inheritence
@@ -131,21 +143,48 @@ function(Phaser)
 
         if(this.cursors.up.isDown)
         {
-            this.wheels.tl.body.moveForward(this.speed);
-            this.wheels.tr.body.moveForward(this.speed);
+            if(this.speed < 0)
+                this.speed = 0;
+
+            this.speed += this.acceleration*game.time.physicsElapsed;
+
         }
-        if(this.cursors.down.isDown)
+        else if(this.cursors.down.isDown)
         {
-            this.wheels.tl.body.moveBackward(this.speed);
-            this.wheels.tr.body.moveBackward(this.speed);
+            if(this.speed > 0)
+                this.speed = 0;
+
+            this.speed -= this.acceleration*game.time.physicsElapsed;
+        }
+        else if(this.speed !== 0)
+        {
+            var direction = Math.sign(this.speed);
+            this.speed -= this.deceleration*game.time.physicsElapsed*direction;
+            // We've gone over
+            if(direction !== Math.sign(this.speed))
+                this.speed = 0;
         }
 
-        var xDist = this.wheels.br.x - this.wheels.bl.x;
+        this.speed = Phaser.Math.clamp(this.speed, -this.maxSpeed, this.maxSpeed);
 
-        var exhaustPosX = this.wheels.bl.x + xDist * 0.75;
+        this.wheels.tl.body.moveForward(this.speed);
+        this.wheels.tr.body.moveForward(this.speed);
 
-        this.emitter.x = exhaustPosX;
-        this.emitter.y = (this.wheels.br.y + this.wheels.bl.y)/2;
+
+
+        for(var i=0; i<this.exhausts.length; i++)
+        {
+            var xDist = this.wheels.br.x - this.wheels.bl.x;
+            var yDist = this.wheels.br.y - this.wheels.bl.y;
+
+            var exhaustPosX = this.wheels.bl.x + xDist * (0.25 + 0.5*i);
+            var exhaustPosY = this.wheels.bl.y + yDist * (0.25 + 0.5*i);
+
+            this.exhausts[i].x = exhaustPosX;
+            this.exhausts[i].y = exhaustPosY;
+
+            this.exhausts[i].frequency = (1 - Math.abs(this.speed/this.maxSpeed)) * 150;
+        }
     };
 
 
