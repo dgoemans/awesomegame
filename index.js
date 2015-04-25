@@ -16,6 +16,7 @@ require(["Phaser",
 function(Phaser,Player,Enemy,Track,Collectible)
 {
     var gameElt = document.getElementById('game');
+    var scale = 0.8;
     game = new Phaser.Game(gameElt.clientWidth, gameElt.clientHeight, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render });
     var player = null;
     var cursors = null;
@@ -42,7 +43,10 @@ function(Phaser,Player,Enemy,Track,Collectible)
         var worldWidth = 500000;
         var worldHeight = 500000;
         game.world.setBounds(0, 0, worldWidth, worldHeight);
-        game.add.tileSprite(0, 0, worldWidth, worldHeight, 'grass');
+
+        //game.world.scale.setTo(0.65);
+
+        game.add.tileSprite(0, 0, game.world.width, game.world.height, 'grass');
 
         game.stage.backgroundColor = '#007236';
         game.physics.startSystem(Phaser.Physics.P2JS);

@@ -16,20 +16,20 @@ function(Phaser)
 
         this.wheels = {};
         this.cursors = cursors;
-        this.size = {x:50,y:90};
+        this.size = {x:30,y:55};
 
-        this.maxSpeed = 1200;
+        this.maxSpeed = 700;
         this.speed = 0;
-        this.acceleration = 1500;
-        this.deceleration = 1000;
+        this.acceleration = 500;
+        this.deceleration = 800;
 
         this.turnSpeed = 0.06;
-        this.turnDamp = 0.9;
-        this.turnMax = Math.PI/5;
+        this.turnDamp = 0.8;
+        this.turnMax = Math.PI/6;
 
-        this.wheelSize = {x:7, y:15};
-        this.frontOffset = { x: 18, y: 21};
-        this.rearOffset = { x: 19, y: 27 };
+        this.wheelSize = {x:5, y:10};
+        this.frontOffset = { x: 10, y: 14 };
+        this.rearOffset = { x: 11, y: 15 };
 
         this.image = game.add.sprite(game.world.centerX-this.size.x/2, game.world.centerY-this.size.y/2, "car", null, this.group);
         this.image.width = this.size.x;
@@ -64,7 +64,7 @@ function(Phaser)
 
             emitter.setRotation(0, Math.PI);
             emitter.setAlpha(1, 0, 700, Phaser.Easing.Quadratic.Out);
-            emitter.setScale(0.2, 2, 0.2, 2, 700, Phaser.Easing.Quadratic.Out);
+            emitter.setScale(0.15, 1, 0.15, 1, 700, Phaser.Easing.Quadratic.Out);
             emitter.start(false, 700, 10);
 
             // Only for draw ordering
@@ -75,8 +75,8 @@ function(Phaser)
 
         this.group.bringToTop(this.image);
 
-        var damp = 0.7;
-        var aDamp = 0.4;
+        var damp = 0.6;
+        var aDamp = 0.3;
 
         this.image.body.mass = 4;
         this.image.body.damping = damp;
@@ -137,18 +137,19 @@ function(Phaser)
         {
             this.wheelAngle += this.turnSpeed;
         }
-
-        if(this.cursors.left.isDown)
+        else if(this.cursors.left.isDown)
         {
             this.wheelAngle -= this.turnSpeed;
+        }
+        else
+        {
+            this.wheelAngle *= this.turnDamp;
         }
 
         this.wheelAngle = Phaser.Math.clamp(this.wheelAngle, -this.turnMax, this.turnMax);
 
         this.wheels.tl.body.rotation = this.wheelAngle + this.image.body.rotation;
         this.wheels.tr.body.rotation = this.wheelAngle + this.image.body.rotation;
-
-        this.wheelAngle *= this.turnDamp;
 
         if(this.cursors.up.isDown || this.autoDrive)
         {
